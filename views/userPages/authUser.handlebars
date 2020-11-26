@@ -1,0 +1,15 @@
+<main>
+    <h2>Private User Details</h2>
+    {{#if user}}
+
+    <li>Username: {{user.username}}</li>
+    <li>First name: {{user.firstName}}</li>
+    <li>Last name: {{user.lastName}}</li>
+    <li>Profession: {{user.profession}}</li>
+    <li>Bio: {{user.bio}}</li>
+
+    {{/if}}
+
+    <a href="/logout">Logout</a>
+
+</main>
