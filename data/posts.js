@@ -28,9 +28,9 @@ let exportedMethods = {
     likes = 0,
     comments = {}
   ) {
-    if (!posterId || !blogTitle || !blogBody || !blogImage)
+    if (!posterId || !blogTitle || !blogBody)
       throw new Error(
-        `Please provide input values in the following order: (posterId, blogTitle, blogBody, blogImage)`
+        `Please provide input values in the following order: (posterId, blogTitle, blogBody)`
       );
 
     // blogTitle
@@ -54,13 +54,13 @@ let exportedMethods = {
     const userThatPosted = await users.getUserById(posterId);
 
     const newPost = {
+      blogTitle: blogTitle,
+      blogBody: blogBody,
+      blogImage: blogImage,
       poster: {
         id: posterId,
         name: `${userThatPosted.firstName} ${userThatPosted.lastName}`
       },
-      blogTitle: blogTitle,
-      blogBody: blogBody,
-      blogImage: blogImage,
       tags: tags,
       likes: likes,
       comments: comments
@@ -121,24 +121,25 @@ let exportedMethods = {
     const postCollection = await posts();
 
     try {
-      const post = this.findPostById(id);
+      const post = postCollection.findPostById(id);
+      post.likes += 1;
     } catch (e) {
       console.log(e);
     }
-
-    post.likes += 1;
   },
 
-  async addComment(postId, post, comment, commenterId) {
+  async addComment(postId, comment, commenterId) {
     const postCollection = await posts();
 
     try {
-      const post = this.findPostById(id);
+      const post = postCollection.findPostById(postId);
     } catch (e) {
       console.log(e);
     }
 
-    await users.addCommentToUser(commenterId, postId, comment);
+    await users.addCommentToPost(commenterId, postId, comment);
     return await this.getPostById(postId);
   }
 };
+
+module.exports = exportedMethods;
