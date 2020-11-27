@@ -1,19 +1,14 @@
-const dbConnection = require('./mongoConnection');
+const postRoutes = require('./posts');
+//const userRoutes = require('./users');
 
-const getCollectionFn = collection => {
-  let _col = undefined;
+const constructorMethod = app => {
+  app.use('/', postRoutes);
+  app.use('/posts', postRoutes);
+  //app.use('/users', userRoutes);
 
-  return async () => {
-    if (!_col) {
-      const db = await dbConnection();
-      _col = await db.collection(collection);
-    }
-
-    return _col;
-  };
+  app.use('*', (req, res) => {
+    res.sendStatus(404);
+  });
 };
 
-module.exports = {
-  posts: getCollectionFn('posts'),
-  users: getCollectionFn('users')
-};
+module.exports = constructorMethod;

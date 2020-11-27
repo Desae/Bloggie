@@ -1,6 +1,10 @@
 const express = require('express');
 const router = express.Router();
+const data = require('../data/posts');
 
 router.get('/', async (req, res) => {
-  res.send(`Welcome Home!`);
+  const allPosts = data.getAllPosts();
+  res.render('blogPages/allBlogs', { posts: allPosts });
 });
+
+module.exports = router;
