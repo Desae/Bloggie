@@ -1,0 +1,10 @@
+<main>
+    {{#if posts}}
+    {{#each posts}}
+    <h1>{{posts.blogTitle}}</h1>
+    <img src="" alt="blog image" class="blog-img">
+    <p>{{posts.blogBody}}</p>
+    <aside>{{posts.comments}} <br> {{posts.likes}}</aside>
+    {{/each}}
+    {{/if}}
+</main>
