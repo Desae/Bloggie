@@ -74,7 +74,7 @@ let exportedMethods = {
     const userCollection = await users();
     const deletionInfo = await userCollection.removeOne({ _id: id });
     if (deletionInfo.deletedCount === 0)
-      throw Error(`Could not delete user of id ${id}`);
+      throw new Error(`Could not delete user of id ${id}`);
 
     return true;
   },
@@ -98,7 +98,7 @@ let exportedMethods = {
     );
 
     if (!updateInfo.matchedCount && !modifiedCount)
-      throw Error(`Update failed`);
+      throw new Error(`Update failed`);
     return await this.getUserById(id);
   },
 
