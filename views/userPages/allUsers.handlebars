@@ -1,0 +1,10 @@
+<main>
+    {{#if users}}
+    {{#each users}}
+    <h1>{{users.firstName}}</h1>
+
+    <p>{{users.bio}}</p>
+    <aside>{{users.username}} <br> {{users.email}}</aside>
+    {{/each}}
+    {{/if}}
+</main>
