@@ -15,7 +15,8 @@ router.get('/:id', async (req, res) => {
 router.get('/', async (req, res) => {
   try {
     let userList = await userData.getAllUsers();
-    res.json(userList);
+    //res.json(userList);
+    res.render('userPages/allUsers', { users: userList });
   } catch (e) {
     res.sendStatus(500);
   }
