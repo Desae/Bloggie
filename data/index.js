@@ -1,7 +1,7 @@
 const postData = require('./posts');
-//const userData = require('./users');
+const userData = require('./users');
 
 module.exports = {
-  // users: userData,
+  users: userData,
   posts: postData
 };
