@@ -13,11 +13,12 @@ let exportedMethods = {
     return userList;
   },
   async getUserById(id) {
-    const parsedId = ObjectId(id);
-    if (!ObjectId.isValid(parsedId)) throw new Error(`User id is invalid`);
+    //const parsedId = ObjectId(id);
+    //if (!ObjectId.isValid(id)) throw new Error(`User id is invalid`);
     const userCollection = await users();
-    const user = await userCollection.findOne({ _id: parsedId });
-    if (!user) throw new Error(`user not found`);
+    const user = await userCollection.findOne({ _id: id });
+    if (!user) throw new Error(`User not found`);
+    return user;
   },
   async addUser(firstName, lastName, username, email, password, bio = '') {
     if (!firstName || !lastName || !username || !email || !password || !bio)
@@ -37,23 +38,23 @@ let exportedMethods = {
     if (lastName.trim() === '')
       throw new Error(`Last Name cannot be an empty string`);
 
-    // // email
-    // if (typeof email !== 'string')
-    //   throw new Error(`Kindly ensure that the email is a string`);
-    // if (lastName.trim() === '')
-    //   throw new Error(`Email cannot be an empty string`);
+    // email
+    if (typeof email !== 'string')
+      throw new Error(`Kindly ensure that the email is a string`);
+    if (lastName.trim() === '')
+      throw new Error(`Email cannot be an empty string`);
 
-    // // bio
-    // if (typeof bio !== 'string')
-    //   throw new Error(`Kindly ensure that the bio is a string`);
-    // if (bio.trim() === '') throw new Error(`Bio cannot be an empty string`);
+    // bio
+    if (typeof bio !== 'string')
+      throw new Error(`Kindly ensure that the bio is a string`);
+    if (bio.trim() === '') throw new Error(`Bio cannot be an empty string`);
 
     const userCollection = await users();
 
     // hashing password
     const plainTextPassword = password;
     const hash = await bcrypt.hash(plainTextPassword, saltRounds);
-    console.log(hash);
+    //console.log(hash);
 
     let newUser = {
       firstName: firstName,
@@ -65,10 +66,9 @@ let exportedMethods = {
       posts: []
     };
 
-    const newInsertInfo = await userCollection.insertOne(newUser);
-    if (newInsertInfo.insertedCount === 0)
-      throw new Error(`User insert failed`);
-    return await this.getUserById(newInsertInfo.insertedId);
+    const newInsertInformation = await userCollection.insertOne(newUser);
+    if (newInsertInformation.insertedCount === 0) throw 'Insert failed!';
+    return await this.getUserById(newInsertInformation.insertedId);
   },
   async removeUser(id) {
     const userCollection = await users();
@@ -102,11 +102,11 @@ let exportedMethods = {
     return await this.getUserById(id);
   },
 
-  async addPostUser(userId, blogId, blogTitle) {
+  async addPostToUser(userId, blogId, blogTitle) {
     let currentUser = await this.getUserById(userId);
     console.log(currentUser);
 
-    const userCollection = await user();
+    const userCollection = await users();
     const updateInfo = await userCollection.updateOne(
       { _id: userId },
       { $addToSet: { posts: { id: blogId, title: blogTitle } } }
