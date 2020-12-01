@@ -2,6 +2,7 @@ const mongoCollections = require('../config/mongoCollections');
 const { ObjectId } = require('mongodb');
 const posts = mongoCollections.posts;
 const users = mongoCollections.users;
+const userData = require('./users');
 
 let exportedMethods = {
   async getAllPosts() {
@@ -11,10 +12,10 @@ let exportedMethods = {
   },
 
   async getPostById(id) {
-    const parsedId = ObjectId(id);
-    if (!ObjectId.isValid(parsedId)) throw new Error(`Post id is invalid`);
+    //const parsedId = ObjectId(id);
+    //if (!ObjectId.isValid(parsedId)) throw new Error(`Post id is invalid`);
     const postCollection = await posts();
-    const post = await postCollection.findOne({ _id: parsedId });
+    const post = await postCollection.findOne({ _id: id });
     if (!post) throw new Error(`Post not found!`);
     return post;
   },
@@ -28,9 +29,9 @@ let exportedMethods = {
     likes = 0,
     comments = {}
   ) {
-    if (!posterId || !blogTitle || !blogBody)
+    if (!posterId || !blogTitle || !blogBody || !blogImage || !tags)
       throw new Error(
-        `Please provide input values in the following order: (posterId, blogTitle, blogBody)`
+        `Please provide input values in the following order: (posterId, blogTitle, blogBody, blogImage, tags)`
       );
 
     // blogTitle
@@ -51,7 +52,8 @@ let exportedMethods = {
     }
 
     const postCollection = await posts();
-    const userThatPosted = await users.getUserById(posterId);
+
+    const userThatPosted = await userData.getUserById(posterId);
 
     const newPost = {
       blogTitle: blogTitle,
@@ -70,9 +72,8 @@ let exportedMethods = {
     if (insertInfo.insertedCount === 0)
       throw new Error(`Sorry, post could not be added!`);
 
-    const newId = insertInfo.insertId;
-    await users.addPostToUser(posterId, newId, blogTitle);
-    return await this.getPostById(newId);
+    await userData.addPostToUser(posterId, insertInfo.insertedId, blogTitle);
+    return await this.getPostById(insertInfo.insertedId);
   },
 
   async updatePost(id, updatedPost) {
@@ -139,6 +140,13 @@ let exportedMethods = {
 
     await users.addCommentToPost(commenterId, postId, comment);
     return await this.getPostById(postId);
+  },
+
+  async getPostsByTag(tag) {
+    if (!tag) throw new Error('No tag provided');
+
+    const postCollection = await posts();
+    return await postCollection.find({ tags: tag }).toArray();
   }
 };
 
